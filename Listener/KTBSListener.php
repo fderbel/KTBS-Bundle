@@ -33,44 +33,30 @@ class KTBSListener
 
 {
 
-    private $om;
-    private $securityContext;
-    private $container;
-    private $roleManager;
+   
 
     /**
      * @DI\InjectParams({
-     *     "om"             = @DI\Inject("claroline.persistence.object_manager"),
-     *     "context"        = @DI\Inject("security.context"),
-     *     "container"      = @DI\Inject("service_container"),
-     *     "roleManager"    = @DI\Inject("claroline.manager.role_manager")
+     *     
      * })
      */
-    public function __construct(
-        ObjectManager $om,
-        SecurityContextInterface $context,
-        $container,
-        RoleManager $roleManager
-    )
+    public function __construct()
     {
-        $this->om = $om;
-        $this->securityContext = $context;
-        $this->container = $container;
-        $this->roleManager = $roleManager;
+        
     }
 
     public function createLog(LogGenericEvent $event)
-    {   $token = $this->securityContext->getToken();
+    {   
         $log = $event->getLog();
         // bout de code for ktbs 
            // get user  
          if ($token->getUser() === 'anon.')
-            {$user=$event->getReceiver();}
+            {$user=$log->getReceiver();}
         else 
-             $user=$token->getUser();
+             $user=$log->getDoer();
             // create Base Trace in the inscription event
                 
-         if ($event->getAction() === LogUserCreateEvent::ACTION)
+         if ($log->getAction() === LogUserCreateEvent::ACTION)
             {
             $ktbs = new KtbsConfig() ;
             $ktbs->createBase($user);
@@ -84,14 +70,14 @@ class KTBSListener
             }
         else 
             // create Trace in the inscription workspace
-            if ($event->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
+            if ($log->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
              {   
              $ktbs = new KtbsConfig() ;
              $ktbs->createTrace($user,$event->getWorkspace());
              }
              else 
                 // commucation with collector client
-                    if ($event->getAction() === LogWorkspaceToolReadEvent::ACTION)
+                    if ($log->getAction() === LogWorkspaceToolReadEvent::ACTION)
                         {
                             $ktbs = new KtbsConfig() ;
                             $DataObsel= $ktbs->DataObsel($user,$event->getWorkspace());
@@ -109,7 +95,7 @@ class KTBSListener
                         }
 	                else
 	                    {
-	                        if ($event->getWorkspace() !== null) 
+	                        if ($log->getWorkspace() !== null) 
 	                            {
 	                                $ktbs = new KtbsConfig() ;
 	                                $ktbs->createObsel ($user,$event->getWorkspace(),$log);
