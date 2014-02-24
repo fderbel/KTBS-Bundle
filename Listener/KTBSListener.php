@@ -107,11 +107,8 @@ class KTBSListener
      */
     public function onLog(LogCreateEvent $event)
     {
-         
-          
-        //if (!($event instanceof LogNotRepeatableInterface) or !$this->isARepeat($event)) {
-            $this->createLog($event);
-       // }
+         $this->createLog($event);
+      
     }
 }
 

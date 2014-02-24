@@ -1,3 +1,4 @@
-coat_ktbs_homepage:
-    path:  /hello/{name}
-    defaults: { _controller: CoatKtbsBundle:Default:index }
+coat_ktbs:
+    resource: "@CoatKtbsBundle/Controller/"
+    type:     annotation
+    prefix:   /
