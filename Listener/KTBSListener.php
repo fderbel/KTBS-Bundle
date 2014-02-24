@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Claroline\CoreBundle\Persistence\ObjectManager;
 use JMS\DiExtraBundle\Annotation as DI;
 // for ktbs
+//use Claroline\CoreBundle\Event\LogCreateEvent;
 use Claroline\CoreBundle\Event\Log\LogRoleSubscribeEvent;
 use Claroline\CoreBundle\Event\Log\LogUserLoginEvent;
 use Claroline\CoreBundle\Event\Log\LogWorkspaceToolReadEvent;
@@ -30,70 +31,52 @@ use Coat\Ktbs\KtbsConfig;
  
 class KTBSListener
 
-{
-
-    private $om;
-    private $securityContext;
-    private $container;
-    private $roleManager;
-
-    /**
+{   /**
      * @DI\InjectParams({
-     *     "om"             = @DI\Inject("claroline.persistence.object_manager"),
-     *     "context"        = @DI\Inject("security.context"),
-     *     "container"      = @DI\Inject("service_container"),
-     *     "roleManager"    = @DI\Inject("claroline.manager.role_manager")
+     *     
      * })
      */
-    public function __construct(
-        ObjectManager $om,
-        SecurityContextInterface $context,
-        $container,
-        RoleManager $roleManager
-    )
+    public function __construct()
     {
-        $this->om = $om;
-        $this->securityContext = $context;
-        $this->container = $container;
-        $this->roleManager = $roleManager;
+        
     }
 
-    public function createLog(LogGenericEvent $event)
-    {   $token = $this->securityContext->getToken();
+    public function createLog(LogCreateEvent $event)
+    {   
         $log = $event->getLog();
         // bout de code for ktbs 
            // get user  
-         if ($token->getUser() === 'anon.')
-            {$user=$event->getReceiver();}
+         if ($log->getDoer() === null)
+            {$user=$log->getReceiver();}
         else 
-             $user=$token->getUser();
+             $user=$log->getDoer();
             // create Base Trace in the inscription event
                 
-         if ($event->getAction() === LogUserCreateEvent::ACTION)
+         if ($log->getAction() === LogUserCreateEvent::ACTION)
             {
             $ktbs = new KtbsConfig() ;
             $ktbs->createBase($user);
             }
             
         else 
-           if ($event->getAction() === LogUserLoginEvent::ACTION)
+           if ($log->getAction() === LogUserLoginEvent::ACTION)
             {
             $ktbs = new KtbsConfig() ;
             $ktbs->createBase($user);
             }
         else 
             // create Trace in the inscription workspace
-            if ($event->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
+            if ($log->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
              {   
              $ktbs = new KtbsConfig() ;
-             $ktbs->createTrace($user,$event->getWorkspace());
+             $ktbs->createTrace($user,$log->getWorkspace());
              }
              else 
                 // commucation with collector client
-                    if ($event->getAction() === LogWorkspaceToolReadEvent::ACTION)
+                    if ($log->getAction() === LogWorkspaceToolReadEvent::ACTION)
                         {
                             $ktbs = new KtbsConfig() ;
-                            $DataObsel= $ktbs->DataObsel($user,$event->getWorkspace());
+                            $DataObsel= $ktbs->DataObsel($user,$log->getWorkspace());
                             $trace_Name = $DataObsel["TraceName"];
                             $Base_URI = $DataObsel["BaseURI"];
                             $Model_URI= $DataObsel["model"] ;
@@ -108,21 +91,21 @@ class KTBSListener
                         }
 	                else
 	                    {
-	                        if ($event->getWorkspace() !== null) 
+	                        if ($log->getWorkspace() !== null) 
 	                            {
 	                                $ktbs = new KtbsConfig() ;
-	                                $ktbs->createObsel ($user,$event->getWorkspace(),$log);
+	                                $ktbs->createObsel ($user,$log->getWorkspace(),$log);
 	                            }
 	                    }
     }
 
    
-    /**
-     * @DI\Observe("log")
+     /**
+     * @DI\Observe("claroline.log.create")
      *
-     * @param LogGenericEvent $event
+     * @param \Claroline\CoreBundle\Event\LogCreateEvent $event
      */
-    public function onLog(LogGenericEvent $event)
+    public function onLog(LogCreateEvent $event)
     {
          
           
@@ -131,3 +114,4 @@ class KTBSListener
        // }
     }
 }
+
