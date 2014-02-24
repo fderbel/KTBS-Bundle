@@ -16,7 +16,11 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Claroline\CoreBundle\Persistence\ObjectManager;
 use JMS\DiExtraBundle\Annotation as DI;
 // for ktbs
+<<<<<<< HEAD
 //use Claroline\CoreBundle\Event\LogCreateEvent;
+=======
+use Claroline\CoreBundle\Event\LogCreateEvent;
+>>>>>>> d6484b3b03b221c989eacf49ae47d1243a84be8b
 use Claroline\CoreBundle\Event\Log\LogRoleSubscribeEvent;
 use Claroline\CoreBundle\Event\Log\LogUserLoginEvent;
 use Claroline\CoreBundle\Event\Log\LogWorkspaceToolReadEvent;
@@ -31,7 +35,15 @@ use Coat\Ktbs\KtbsConfig;
  
 class KTBSListener
 
+<<<<<<< HEAD
 {   /**
+=======
+{
+
+   
+
+    /**
+>>>>>>> d6484b3b03b221c989eacf49ae47d1243a84be8b
      * @DI\InjectParams({
      *     
      * })
@@ -41,12 +53,20 @@ class KTBSListener
         
     }
 
+<<<<<<< HEAD
     public function createLog(LogCreateEvent $event)
+=======
+    public function createLog(LogGenericEvent $event)
+>>>>>>> d6484b3b03b221c989eacf49ae47d1243a84be8b
     {   
         $log = $event->getLog();
         // bout de code for ktbs 
            // get user  
+<<<<<<< HEAD
          if ($log->getDoer() === null)
+=======
+         if ($token->getUser() === 'anon.')
+>>>>>>> d6484b3b03b221c989eacf49ae47d1243a84be8b
             {$user=$log->getReceiver();}
         else 
              $user=$log->getDoer();
@@ -94,7 +114,7 @@ class KTBSListener
 	                        if ($log->getWorkspace() !== null) 
 	                            {
 	                                $ktbs = new KtbsConfig() ;
-	                                $ktbs->createObsel ($user,$event->getWorkspace(),$log);
+	                                $ktbs->createObsel ($user,$log->getWorkspace(),$log);
 	                            }
 	                    }
     }
