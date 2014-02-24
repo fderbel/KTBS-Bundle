@@ -1,0 +1,7 @@
+parameters:
+#    coat_ktbs.example.class: Coat\KtbsBundle\Example
+
+services:
+#    coat_ktbs.example:
+#        class: %coat_ktbs.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

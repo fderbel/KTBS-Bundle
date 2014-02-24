@@ -1,0 +1,21 @@
+{
+    "name": "coat/ktbs-bundle",
+    "description": "",
+    "keywords": ["ktbs", "trace", "log"],
+    "license": "",
+    "authors": [
+        {
+            "name": "Derbel fatma",
+            "homepage": "https://github.com/fderbel"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "coat/ktbs": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Coat\\KtbsBundle": "" }
+    },
+    "target-dir": "Coat/KtbsBundle"
+    
+}
