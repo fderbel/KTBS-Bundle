@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Claroline\CoreBundle\Persistence\ObjectManager;
 use JMS\DiExtraBundle\Annotation as DI;
 // for ktbs
+use Claroline\CoreBundle\Event\LogCreateEvent;
 use Claroline\CoreBundle\Event\Log\LogRoleSubscribeEvent;
 use Claroline\CoreBundle\Event\Log\LogUserLoginEvent;
 use Claroline\CoreBundle\Event\Log\LogWorkspaceToolReadEvent;
@@ -117,12 +118,12 @@ class KTBSListener
     }
 
    
-    /**
-     * @DI\Observe("log")
+     /**
+     * @DI\Observe("claroline.log.create")
      *
-     * @param LogGenericEvent $event
+     * @param \Claroline\CoreBundle\Event\LogCreateEvent $event
      */
-    public function onLog(LogGenericEvent $event)
+    public function onLog(LogCreateEvent $event)
     {
          
           
