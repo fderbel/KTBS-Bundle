@@ -16,6 +16,9 @@
     "autoload": {
         "psr-0": { "Coat\\KtbsBundle": "" }
     },
-    "target-dir": "Coat/KtbsBundle"
+    "target-dir": "Coat/KtbsBundle",
+    "extra": {
+        "dbVersion": "20130820133717"
+    }
     
 }
