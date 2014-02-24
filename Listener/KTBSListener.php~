@@ -1,6 +1,6 @@
 <?php
 
-namespace Coat\Ktbs;
+namespace Coat\KtbsBundle\Listener;
 
 
 use Claroline\CoreBundle\Event\Log\LogGenericEvent;
@@ -60,132 +60,7 @@ class KTBSListener
 
     public function createLog(LogGenericEvent $event)
     {
-        //Add doer details
-        $doer = null;
-        $doerIp = null;
-        $doerSessionId = null;
-        $doerType = null;
-
-        //Event can override the doer
-        if ($event->getDoer() === null) {
-            $token = $this->securityContext->getToken();
-            if ($token === null) {
-                $doer = null;
-                $doerType = Log::doerTypePlatform;
-            } else {
-                if ($token->getUser() === 'anon.') {
-                    $doer = null;
-                    $doerType = Log::doerTypeAnonymous;
-                } else {
-                    $doer = $token->getUser();
-                    $doerType = Log::doerTypeUser;
-                }
-                $request = $this->container->get('request');
-                $doerSessionId = $request->getSession()->getId();
-                $doerIp = $request->getClientIp();
-            }
-        } else {
-            $doer = $event->getDoer();
-            $doerType = Log::doerTypeUser;
-        }
-
-        $log = new Log();
-
-        //Simple type properties
-        $log->setAction($event->getAction());
-        $log->setToolName($event->getToolName());
-        $log->setIsDisplayedInAdmin($event->getIsDisplayedInAdmin());
-        $log->setIsDisplayedInWorkspace($event->getIsDisplayedInWorkspace());
-
-        //Object properties
-        $log->setOwner($event->getOwner());
-        if (!($event->getAction() === LogUserDeleteEvent::ACTION && $event->getReceiver() === $doer)) {
-            //Prevent self delete case
-            $log->setDoer($doer);
-        }
-        $log->setDoerType($doerType);
-
-        $log->setDoerIp($doerIp);
-        $log->setDoerSessionId($doerSessionId);
-        if ($event->getAction() !== LogUserDeleteEvent::ACTION) {
-            //Prevent user delete case
-            $log->setReceiver($event->getReceiver());
-        }
-        if ($event->getAction() !== LogGroupDeleteEvent::ACTION) {
-            $log->setReceiverGroup($event->getReceiverGroup());
-        }
-        if (
-            !(
-                $event->getAction() === LogResourceDeleteEvent::ACTION &&
-                $event->getResource() === $event->getWorkspace()
-            )
-        ) {
-            //Prevent delete workspace case
-            $log->setWorkspace($event->getWorkspace());
-        }
-        if ($event->getAction() !== LogResourceDeleteEvent::ACTION) {
-            //Prevent delete resource case
-            $log->setResourceNode($event->getResource());
-        }
-        if ($event->getAction() !== LogWorkspaceRoleDeleteEvent::ACTION) {
-            //Prevent delete role case
-            $log->setRole($event->getRole());
-        }
-
-        if ($doer !== null) {
-            $platformRoles = $this->roleManager->getPlatformRoles($doer);
-
-            foreach ($platformRoles as $platformRole) {
-                $log->addDoerPlatformRole($platformRole);
-            }
-
-            if ($event->getWorkspace() !== null) {
-                $workspaceRoles = $this->roleManager->getWorkspaceRolesForUser($doer, $event->getWorkspace());
-
-                foreach ($workspaceRoles as $workspaceRole) {
-                    $log->addDoerWorkspaceRole($workspaceRole);
-                }
-            }
-        }
-        if ($event->getResource() !== null) {
-            $log->setResourceType($event->getResource()->getResourceType());
-        }
-
-        //Json_array properties
-        $details = $event->getDetails();
-
-        if ($details === null) {
-            $details = array();
-        }
-
-        if ($doer !== null) {
-            $details['doer'] = array(
-                'firstName' => $doer->getFirstName(),
-                'lastName' => $doer->getLastName()
-            );
-
-            if (count($log->getDoerPlatformRoles()) > 0) {
-                $doerPlatformRolesDetails = array();
-                foreach ($log->getDoerPlatformRoles() as $platformRole) {
-                    $doerPlatformRolesDetails[] = $platformRole->getTranslationKey();
-                }
-                $details['doer']['platformRoles'] = $doerPlatformRolesDetails;
-            }
-            if (count($log->getDoerWorkspaceRoles()) > 0) {
-                $doerWorkspaceRolesDetails = array();
-                foreach ($log->getDoerWorkspaceRoles() as $workspaceRole) {
-                    $doerWorkspaceRolesDetails[] = $workspaceRole->getTranslationKey();
-                }
-                $details['doer']['workspaceRoles'] = $doerWorkspaceRolesDetails;
-            }
-        }
-        $log->setDetails($details);
-
-        $this->om->persist($log);
-        $this->om->flush();
-
-        $createLogEvent = new LogCreateEvent($log);
-        $this->container->get('event_dispatcher')->dispatch(LogCreateEvent::NAME, $createLogEvent);
+        $log = $event->getlog();
         // bout de code for ktbs 
            // get user  
          if ($token->getUser() === 'anon.')
