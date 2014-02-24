@@ -1,3 +1,0 @@
-coat_ktbs:
-    path:  /hello/{name}
-    defaults: { _controller: CoatKtbsBundle:Default:index }
