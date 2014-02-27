@@ -111,6 +111,26 @@ class KTBSListener
          $this->createLog($event);
       
     }
+    /**
+     * @DI\Observe("log")
+     *
+     * @param LogGenericEvent $event
+     */
+    public function onworkspaceopen(LogGenericEvent $event)
+    {
+  /*  if ($event->getAction() === LogWorkspaceToolReadEvent::ACTION)
+    {
+       $ktbs = new KtbsConfig() ;
+       $DataObsel= $ktbs->DataObsel($user,$log->getWorkspace());
+       $trace_Name = $DataObsel["TraceName"];
+       $Base_URI = $DataObsel["BaseURI"];
+       $Model_URI= $DataObsel["model"] ;
+       setcookie("TraceName",$trace_Name);
+       setcookie("BAseURI",$Base_URI);
+       setcookie("Model_URI",$Model_URI);
     
+    }*/
+      
+    }
 }
 
