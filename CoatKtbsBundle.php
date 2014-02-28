@@ -4,9 +4,9 @@ namespace Coat\KtbsBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Claroline\KernelBundle\Bundle\ConfigurationBuilder;
+use Claroline\CoreBundle\Library\PluginBundle;
 
-
-class CoatKtbsBundle extends Bundle
+class CoatKtbsBundle extends PluginBundle
 {
  public function getConfiguration($environment)
     {
