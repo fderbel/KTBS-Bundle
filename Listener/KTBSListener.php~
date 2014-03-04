@@ -98,7 +98,7 @@ class KTBSListener
 	                            {
 	                              $ktbs = new KtbsConfig() ;
 	                               $ktbs->createObsel ($user,$log->getWorkspace(),$log);
-	                               
+	                               exit;
 	                            }
 	                    }
     }
