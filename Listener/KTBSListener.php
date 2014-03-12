@@ -94,9 +94,9 @@ class KTBSListener
                         }
 	                else
 	                    {
-	                        if ($log->getWorkspace() !== null) 
+	                        if (($log->getWorkspace() !== null) && ($user !== null))
 	                            {
-	                              $ktbs = new KtbsConfig() ;
+	                               $ktbs = new KtbsConfig() ;
 	                               $ktbs->createObsel ($user,$log->getWorkspace(),$log);
 	                               
 	                            }
@@ -111,6 +111,7 @@ class KTBSListener
      */
     public function onLog(LogCreateEvent $event)
     {
+   
          $this->createLog($event);
       
     }
