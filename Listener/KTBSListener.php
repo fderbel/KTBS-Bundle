@@ -51,18 +51,8 @@ class KTBSListener
             {$user=$log->getReceiver();}
         else 
             { $user=$log->getDoer();}
-            // create Base Trace in the inscription event
             
-        /* if ($log->getAction() === LogUserCreateEvent::ACTION)
-            {
-           
-           // $ktbs = new KtbsConfig() ;
-           // $ktbs->createBase($user);
-           
-            }*/
-            
-       
-           if ($log->getAction() === LogUserLoginEvent::ACTION)
+       if ($log->getAction() === LogUserLoginEvent::ACTION)
             {
             $ktbs = new KtbsConfig() ;
             $ktbs->createBase($user);
@@ -72,7 +62,10 @@ class KTBSListener
             if ($log->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
              {  
              $ktbs = new KtbsConfig() ;
+             if ($ktbs->exist)
+             {
              $ktbs->createTrace($user,$log->getWorkspace());
+             }
              }
              else 
                 // commucation with collector client
@@ -80,6 +73,8 @@ class KTBSListener
                     if ($log->getAction() === LogWorkspaceToolReadEvent::ACTION)
                         {
                             $ktbs = new KtbsConfig() ;
+                            if ($ktbs->exist)
+                            {
                             $DataObsel= $ktbs->DataObsel($user,$log->getWorkspace());
                             $trace_Name = $DataObsel["TraceName"];
                             $Base_URI = $DataObsel["BaseURI"];
@@ -90,14 +85,17 @@ class KTBSListener
                            setcookie("BAseURI",$Base_URI);
                            setcookie("Model_URI",$Model_URI);
                            
-                            
+                            }
                         }
 	                else
 	                    {
 	                        if (($log->getWorkspace() !== null) && ($user !== null))
 	                            {
 	                               $ktbs = new KtbsConfig() ;
+	                               if ($ktbs->exist)
+	                               {
 	                               $ktbs->createObsel ($user,$log->getWorkspace(),$log);
+	                               }
 	                               
 	                            }
 	                    }
