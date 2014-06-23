@@ -55,7 +55,8 @@ class KTBSListener
        if ($log->getAction() === LogUserLoginEvent::ACTION)
             {
             $ktbs = new KtbsConfig() ;
-            $ktbs->createBase($user);
+            if ($user !== null)
+                {$ktbs->createBase($user);}
             }
         else 
             // create Trace in the inscription workspace
@@ -64,7 +65,8 @@ class KTBSListener
              $ktbs = new KtbsConfig() ;
              if ($ktbs->exist)
              {
-             $ktbs->createTrace($user,$log->getWorkspace());
+                  if (($log->getWorkspace() !== null) && ($user !== null))
+                    {$ktbs->createTrace($user,$log->getWorkspace());}
              }
              }
              else 
@@ -72,6 +74,9 @@ class KTBSListener
                 
                     if ($log->getAction() === LogWorkspaceToolReadEvent::ACTION)
                         {
+                        
+                          if (($log->getWorkspace() !== null) && ($user !== null))
+                          {
                             $ktbs = new KtbsConfig() ;
                             if ($ktbs->exist)
                             {
@@ -84,6 +89,7 @@ class KTBSListener
                            setcookie("TraceName",$trace_Name);
                            setcookie("BAseURI",$Base_URI);
                            setcookie("Model_URI",$Model_URI);
+                           }
                            
                             }
                         }
