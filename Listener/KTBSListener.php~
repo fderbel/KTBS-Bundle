@@ -44,7 +44,7 @@ class KTBSListener
     public function createLog(LogCreateEvent $event)
     {   
         $log = $event->getLog();
-       echo 'here';
+       var_dump ($log->getDoer());
         // bout de code for ktbs 
            // get user  
          if ($log->getDoer() === null)
@@ -94,8 +94,8 @@ class KTBSListener
                             }
                         }
 	                else
-	                    {
-	                        if (($log->getWorkspace() !== null) && ($user !== null))
+	                    {  
+	                        if (($log->getWorkspace() !== null) && ($user !== null) && ($log->getDoer()!== null))
 	                            {
 	                               $ktbs = new KtbsConfig() ;
 	                               if ($ktbs->exist)
