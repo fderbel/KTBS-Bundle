@@ -41,70 +41,44 @@ class KTBSListener
         
     }
 
-    public function createLog(LogCreateEvent $event)
-    {   
+    public function createLog(LogCreateEvent $event){   
         $log = $event->getLog();
-       var_dump ($log->getDoer());
-        // bout de code for ktbs 
-           // get user  
-         if ($log->getDoer() === null)
+        // get user  
+        if ($log->getDoer() === null)
             {$user=$log->getReceiver();}
         else 
             { $user=$log->getDoer();}
-            
-       if ($log->getAction() === LogUserLoginEvent::ACTION)
-            {
-            $ktbs = new KtbsConfig() ;
-            if ($user !== null)
-                {$ktbs->createBase($user);}
-            }
-        else 
-            // create Trace in the inscription workspace
-            if ($log->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
-             {  
-             $ktbs = new KtbsConfig() ;
-             if ($ktbs->exist)
-             {
-                  if (($log->getWorkspace() !== null) && ($user !== null))
-                    {$ktbs->createTrace($user,$log->getWorkspace());}
-             }
-             }
-             else 
-                // commucation with collector client
-                
-                    if ($log->getAction() === LogWorkspaceToolReadEvent::ACTION)
+        // case with action    
+        switch ($log->getAction()){
+            case LogWorkspaceToolReadEvent::ACTION :
+            {           //enter in the workspace and commucation with collector client
+                       
+                        if (($log->getWorkspace() !== null) && ($user !== null))
                         {
-                        
-                          if (($log->getWorkspace() !== null) && ($user !== null))
-                          {
-                            $ktbs = new KtbsConfig() ;
+                            $ktbs = new KtbsConfig($user,$log->getWorkspace()) ;
                             if ($ktbs->exist)
                             {
-                            $DataObsel= $ktbs->DataObsel($user,$log->getWorkspace());
-                            $trace_Name = $DataObsel["TraceName"];
-                            $Base_URI = $DataObsel["BaseURI"];
-                            $Model_URI= $DataObsel["model"] ;
-                           
-          
-                           setcookie("TraceName",$trace_Name);
-                           setcookie("BAseURI",$Base_URI);
-                           setcookie("Model_URI",$Model_URI);
-                           }
-                           
-                            }
+                              $DataObsel= $ktbs->DataObsel($user,$log->getWorkspace());
+                              $trace_Name = $DataObsel["TraceName"];
+                              $Base_URI = $DataObsel["BaseURI"];
+                              $Model_URI= $DataObsel["modelURI"] ;
+                              setcookie("TraceName",$trace_Name);
+                              setcookie("BAseURI",$Base_URI);
+                              setcookie("Model_URI",$Model_URI);
+                             }
                         }
-	                else
-	                    {  
-	                        if (($log->getWorkspace() !== null) && ($user !== null) && ($log->getDoer()!== null))
-	                            {
-	                               $ktbs = new KtbsConfig() ;
-	                               if ($ktbs->exist)
-	                               {
-	                               $ktbs->createObsel ($user,$log->getWorkspace(),$log);
-	                               }
-	                               
-	                            }
+             }
+             default :
+             {      //observe event
+                        
+                        if (($log->getWorkspace() !== null) && ($user !== null) )
+	                    {
+	                         $ktbs = new KtbsConfig($user,$log->getWorkspace()) ;
+	                         $ktbs->createObsel ($log);
 	                    }
+             } 
+      
+        }
     }
 
    
@@ -113,12 +87,67 @@ class KTBSListener
      *
      * @param \Claroline\CoreBundle\Event\LogCreateEvent $event
      */
-    public function onLog(LogCreateEvent $event)
-    {
-   
-         $this->createLog($event);
-      
+    public function onLog(LogCreateEvent $event){
+        $this->createLog($event);
     }
     
 }
+
+
+
+
+
+/**
+  if ($log->getAction() === LogUserLoginEvent::ACTION){
+            /*$ktbs = new KtbsConfig() ;
+            if ($user !== null)
+                {$ktbs->createBase($user);}
+            }
+        else 
+            // create Trace in the inscription workspace
+            if ($log->getAction() === LogRoleSubscribeEvent::ACTION_USER) 
+             {  
+             /*$ktbs = new KtbsConfig() ;
+             if ($ktbs->exist)
+             {
+                  if (($log->getWorkspace() !== null) && ($user !== null))
+                    {$ktbs->createTrace($user,$log->getWorkspace());}
+             }
+             }
+             else 
+                // enter in the workspace and commucation with collector client
+                
+                    if ($log->getAction() === LogWorkspaceToolReadEvent::ACTION)
+                        {
+                        var_dump ('enter workspace');
+                        if (($log->getWorkspace() !== null) && ($user !== null))
+                          {
+                                $ktbs = new KtbsConfig($user,$log->getWorkspace()) ;
+                                if ($ktbs->exist)
+                                    {
+                                        $DataObsel= $ktbs->DataObsel($user,$log->getWorkspace());
+                                        $trace_Name = $DataObsel["TraceName"];
+                                        $Base_URI = $DataObsel["BaseURI"];
+                                        $Model_URI= $DataObsel["modelURI"] ;
+                                        setcookie("TraceName",$trace_Name);
+                                        setcookie("BAseURI",$Base_URI);
+                                        setcookie("Model_URI",$Model_URI);
+                                    }
+                           
+                          }
+                        }
+	               /* else
+	                    {  
+	                        if (($log->getWorkspace() !== null) && ($user !== null) && ($log->getDoer()!== null))
+	                            {
+	                              // $ktbs = new KtbsConfig() ;
+	                              $ktbs = new KtbsConfig($user,$log->getWorkspace()) ;
+	                               if ($ktbs->exist)
+	                               {
+	                               $ktbs->createObsel ($user,$log->getWorkspace(),$log);
+	                               }
+	                               
+	                            }
+	                    }*/
+
 
