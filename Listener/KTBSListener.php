@@ -77,7 +77,7 @@ class KTBSListener
                         if (($log->getWorkspace() !== null) && ($user !== null) )
 	                    {
 	                         $ktbs = new KtbsConfig($user,$log->getWorkspace()) ;
-	                         $ktbs->createObsel ($log);
+	                         $ktbs->createObsel ($log,$user);
 	                    }
              } 
       
